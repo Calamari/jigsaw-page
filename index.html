@@ -17,7 +17,7 @@
       cursor: move;
     }
     #menu {
-      background: #fff; /* Old browsers */
+      background: #2f2726; /* Old browsers */
       background: -moz-linear-gradient(top, #f9f9f9 0%, #ffffff 100%); /* FF3.6+ */
       background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f9f9f9), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
       background: -webkit-linear-gradient(top, #f9f9f9 0%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
@@ -25,6 +25,7 @@
       background: -ms-linear-gradient(top, #f9f9f9 0%,#ffffff 100%); /* IE10+ */
       background: linear-gradient(to bottom, #f9f9f9 0%,#ffffff 100%); /* W3C */
       border-bottom: 1px solid #434;
+      color: #605050;
       position: absolute;
       top: 0;
       left: 0;
@@ -73,8 +74,8 @@
 <body>
   <header id="menu">
     <form method="GET" action="#" id="puzzleform">
-      File URL: <input name="url" type="text" placeholder="Choose image">
-      tiled up: <input name="x" type="text" value="5" size="1"> x <input name="y" type="text" value="5" size="1">
+      File URL: <input name="url" type="text" placeholder="Choose image" value="http://www.get83.de/images/20080625001233_fishernet hdr.jpg">
+      tiled up: <input name="x" type="text" value="1" size="1"> x <input name="y" type="text" value="5" size="1">
       <button type="submit" id="puzzleit">Puzzle it!</button>
     </form>
   </header>
@@ -101,12 +102,19 @@
       };
     }(window));
     $(function() {
-      startJigsaw('http://www.get83.de/images/20080625001233_fishernet hdr.jpg', 5, 4);
+      var hash = location.hash.replace('#', ''),
+          params = hash.split(';');
+      if (params.length === 3) {
+        startJigsaw(params[0], params[1], params[2]);
+      } else {
+        startJigsaw('http://www.get83.de/images/20080625001233_fishernet hdr.jpg', 1, 4);
+      }
 
       var form = $('#puzzleform');
       form.on('submit', function(event) {
         event.preventDefault();
         startJigsaw(form.find('input[name=url]').val(), form.find('input[name=x]').val(), form.find('input[name=y]').val());
+        location.hash = '#' + form.find('input[name=url]').val() + ';' + form.find('input[name=x]').val() + ';' + form.find('input[name=y]').val();
       });
     });
   </script>
