@@ -2,6 +2,9 @@
 <html>
 <head>
   <title>Test</title>
+  <meta property="og:title" content="Jigsaw on jaz-lounge.com - by Georg Tavonius">
+  <meta property="og:description" content="Puzzle something from time to time. It's kind of a Zen thing.">
+  <meta property="og:image" content="TODO">
   <style>
     body {
       background: url(bg.jpg);
@@ -36,9 +39,9 @@
     }
 
     header:before {
-    content: "";
-    border: 15px solid transparent;
-    border-top-color: #434;
+      content: "";
+      border: 15px solid transparent;
+      border-top-color: #434;
       width: 0;
       height: 0;
       position: absolute;
@@ -46,9 +49,9 @@
       bottom: -31px;
     }
     header:after {
-    content: "";
-    border: 15px solid transparent;
-    border-top-color: #fff;
+      content: "";
+      border: 15px solid transparent;
+      border-top-color: #fff;
       width: 0;
       height: 0;
       position: absolute;
@@ -60,6 +63,69 @@
     input[name=y] {
       text-align: center;
     }
+
+    button.help {
+      position: absolute;
+      right: 4px;
+      top: 4px;
+    }
+
+    .solved-layer,
+    div.help {
+      display: none;
+      background: #fff;
+      border: 1px solid #999;
+      border-radius: 4px;
+      position: absolute;
+      padding: 4px 10px;
+      right: 4px;
+      top: 35px;
+      width: 300px;
+      box-shadow: 0px 0px 4px rgba(0,0,0,0.4);
+    }
+    div.help:before {
+      content: "";
+      border: 11px solid transparent;
+      border-bottom-color: #434;
+      width: 0;
+      height: 0;
+      position: absolute;
+      right: 40px;
+      top: -23px;
+    }
+    div.help:after {
+      content: "";
+      border: 11px solid transparent;
+      border-bottom-color: #fff;
+      width: 0;
+      height: 0;
+      position: absolute;
+      right: 40px;
+      top: -22px;
+    }
+    .solved-layer {
+      display: block;
+      top: 40%;
+      right: -400px;
+      padding: 20px;
+      z-index: 1000;
+      -webkit-transition: right 0.6s ease-in-out;
+    }
+    .solved-layer h4 {
+      font-size: 1.2em;
+      margin-top: 0px;
+    }
+    .solved-layer.open {
+      right: 0px;
+    }
+    .solved-layer .closer {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      color: #999;
+      cursor: pointer;
+    }
+
   </style>
   <script src="lib/jquery-1.8.3.min.js"></script>
   <script src="lib/underscore-1.4.2.js"></script>
@@ -75,10 +141,30 @@
   <header id="menu">
     <form method="GET" action="#" id="puzzleform">
       File URL: <input name="url" type="text" placeholder="Choose image" value="http://www.get83.de/images/20080625001233_fishernet hdr.jpg">
-      tiled up: <input name="x" type="text" value="1" size="1"> x <input name="y" type="text" value="5" size="1">
+      tiled up: <input name="x" type="text" value="4" size="1"> x <input name="y" type="text" value="4" size="1">
       <button type="submit" id="puzzleit">Puzzle it!</button>
     </form>
+
+    <button class="help">What is this ?</button>
+    <div class="help">
+      <p>This is a jigsaw puzzle generator, where you can either choose an image via url and puzzle it, or puzzle a random nicht-lustig comic.</p>
+
+      <h4>Share the puzzle you are currently solving to your friends:</h4>
+      <a href="" class="share-fb" target="_blank">Share auf Facebook</a>
+      <a href="" class="share-twitter" target="_blank">Share auf Twitter</a>
+    </div>
   </header>
+  <div class="solved-layer">
+    <span class="closer">X</span>
+    <h4>Gratulations, you solved this one.</h4>
+    <p><strong>Shared happiness is double happiness</strong>, so let your friends solve this puzzle, too:</p>
+    <a href="" class="share-fb" target="_blank">on Facebook</a>
+    <br>
+    <a href="" class="share-twitter" target="_blank">on Twitter</a>
+    <br>
+    or donate a beer or flattr
+  </div>
+  <script type="text/javascript" src="notfunnys.js"></script>
   <script>
     (function(win) {
       win.startJigsaw = function(url, x, y) {
@@ -97,24 +183,57 @@
           },
           onComplete: function() {
             console.log("completed", arguments);
+            $('.solved-layer').addClass('open');
           }
         });
       };
     }(window));
+
     $(function() {
-      var hash = location.hash.replace('#', ''),
-          params = hash.split(';');
+      var solvedLayer = $('.solved-layer'),
+          hash        = location.hash.replace('#', ''),
+          params      = hash.split(';');
       if (params.length === 3) {
-        startJigsaw(params[0], params[1], params[2]);
+        openPuzzle(params[0], params[1], params[2]);
       } else {
-        startJigsaw('http://www.get83.de/images/20080625001233_fishernet hdr.jpg', 1, 4);
+        openPuzzle('http://www.get83.de/images/20080625001233_fishernet hdr.jpg', 4, 4);
       }
+
+      function openPuzzle(url, x, y) {
+        startJigsaw(url, x, y);
+        location.hash = '#' + url + ';' + x + ';' + y;
+
+        solvedLayer.removeClass('open');
+
+        var text = encodeURIComponent('Take time and puzzle with jaz-lounge.com jigsaw. It\'s kind of a Zen thing.'),
+            shareUrl = encodeURIComponent(location);
+        $('.share-fb').prop('href', 'http://www.facebook.com/sharer.php?u=' + shareUrl + '&p[title]=TITLE&p[url]=URL&p[summary]=' + text);
+
+        $('.share-twitter').prop('href', 'https://twitter.com/intent/tweet?url=' + shareUrl + '&text=' + text);
+      }
+
+      function openShareWindow(url) {
+        window.open(url, 'share-jigsaw', 'status=0,location=0,toolbar=0,width=575,height=400');
+      }
+
+      solvedLayer.on('click', '.closer', function() {
+        solvedLayer.removeClass('open');
+      });
+
 
       var form = $('#puzzleform');
       form.on('submit', function(event) {
         event.preventDefault();
-        startJigsaw(form.find('input[name=url]').val(), form.find('input[name=x]').val(), form.find('input[name=y]').val());
-        location.hash = '#' + form.find('input[name=url]').val() + ';' + form.find('input[name=x]').val() + ';' + form.find('input[name=y]').val();
+        openPuzzle(form.find('input[name=url]').val(), form.find('input[name=x]').val(), form.find('input[name=y]').val());
+      });
+
+      $('button.help').on('click', function() {
+        $('div.help').toggle();
+      });
+
+      $('.share-fb, .share-twitter').on('click', function(event) {
+        openShareWindow(this.href)
+        event.preventDefault();
       });
     });
   </script>
