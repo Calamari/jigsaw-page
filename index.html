@@ -1,132 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <link rel="shortcut icon" href="img/favicon.ico">
+  <link rel="icon" type="image/png" href="img/favicon.png">
   <title>Test</title>
   <meta property="og:title" content="Jigsaw on jaz-lounge.com - by Georg Tavonius">
   <meta property="og:description" content="Puzzle something from time to time. It's kind of a Zen thing.">
   <meta property="og:image" content="TODO">
-  <style>
-    body {
-      background: url(bg.jpg);
-    }
-    body * {
-      font-family: "Avant Garde", Avantgarde, "Century Gothic", CenturyGothic, "AppleGothic", sans-serif;
-      font-size: 14px;
-    }
-    .puzzle-piece {
-      position: absolute;
-    }
-    svg path {
-      cursor: move;
-    }
-    #menu {
-      background: #2f2726; /* Old browsers */
-      background: -moz-linear-gradient(top, #f9f9f9 0%, #ffffff 100%); /* FF3.6+ */
-      background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f9f9f9), color-stop(100%,#ffffff)); /* Chrome,Safari4+ */
-      background: -webkit-linear-gradient(top, #f9f9f9 0%,#ffffff 100%); /* Chrome10+,Safari5.1+ */
-      background: -o-linear-gradient(top, #f9f9f9 0%,#ffffff 100%); /* Opera 11.10+ */
-      background: -ms-linear-gradient(top, #f9f9f9 0%,#ffffff 100%); /* IE10+ */
-      background: linear-gradient(to bottom, #f9f9f9 0%,#ffffff 100%); /* W3C */
-      border-bottom: 1px solid #434;
-      color: #605050;
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 28px;
-      padding: 4px 10px;
-      z-index: 10000;
-    }
-
-    header:before {
-      content: "";
-      border: 15px solid transparent;
-      border-top-color: #434;
-      width: 0;
-      height: 0;
-      position: absolute;
-      left: 20em;
-      bottom: -31px;
-    }
-    header:after {
-      content: "";
-      border: 15px solid transparent;
-      border-top-color: #fff;
-      width: 0;
-      height: 0;
-      position: absolute;
-      left: 20em;
-      bottom: -30px;
-    }
-
-    input[name=x],
-    input[name=y] {
-      text-align: center;
-    }
-
-    button.help {
-      position: absolute;
-      right: 4px;
-      top: 4px;
-    }
-
-    .solved-layer,
-    div.help {
-      display: none;
-      background: #fff;
-      border: 1px solid #999;
-      border-radius: 4px;
-      position: absolute;
-      padding: 4px 10px;
-      right: 4px;
-      top: 35px;
-      width: 300px;
-      box-shadow: 0px 0px 4px rgba(0,0,0,0.4);
-    }
-    div.help:before {
-      content: "";
-      border: 11px solid transparent;
-      border-bottom-color: #434;
-      width: 0;
-      height: 0;
-      position: absolute;
-      right: 40px;
-      top: -23px;
-    }
-    div.help:after {
-      content: "";
-      border: 11px solid transparent;
-      border-bottom-color: #fff;
-      width: 0;
-      height: 0;
-      position: absolute;
-      right: 40px;
-      top: -22px;
-    }
-    .solved-layer {
-      display: block;
-      top: 40%;
-      right: -400px;
-      padding: 20px;
-      z-index: 1000;
-      -webkit-transition: right 0.6s ease-in-out;
-    }
-    .solved-layer h4 {
-      font-size: 1.2em;
-      margin-top: 0px;
-    }
-    .solved-layer.open {
-      right: 0px;
-    }
-    .solved-layer .closer {
-      position: absolute;
-      top: 3px;
-      right: 3px;
-      color: #999;
-      cursor: pointer;
-    }
-
-  </style>
+  <link rel="stylesheet" type="text/css" href="css/site.css">
   <script src="lib/jquery-1.8.3.min.js"></script>
   <script src="lib/underscore-1.4.2.js"></script>
   <script src="lib/base.js"></script>
@@ -143,6 +24,8 @@
       File URL: <input name="url" type="text" placeholder="Choose image" value="http://www.get83.de/images/20080625001233_fishernet hdr.jpg">
       tiled up: <input name="x" type="text" value="4" size="1"> x <input name="y" type="text" value="4" size="1">
       <button type="submit" id="puzzleit">Puzzle it!</button>
+
+      or <button id="notfunny-button">puzzle a random nicht-lustig.de comic: Get a nicht-lustig.</button><sup><a href="http://www.nicht-lustig.de" target="_blank">[1]</a></sup>
     </form>
 
     <button class="help">What is this ?</button>
@@ -150,18 +33,22 @@
       <p>This is a jigsaw puzzle generator, where you can either choose an image via url and puzzle it, or puzzle a random nicht-lustig comic.</p>
 
       <h4>Share the puzzle you are currently solving to your friends:</h4>
-      <a href="" class="share-fb" target="_blank">Share auf Facebook</a>
-      <a href="" class="share-twitter" target="_blank">Share auf Twitter</a>
+      <div class="share-row">
+        <a href="" class="share-icon share-fb" target="_blank">Share on Facebook</a>
+        <a href="" class="share-icon share-twitter" target="_blank">Share on Twitter</a>
+        <a href="" class="share-icon share-gplus" target="_blank">Share on Google+</a>
+      </div>
     </div>
   </header>
   <div class="solved-layer">
     <span class="closer">X</span>
     <h4>Gratulations, you solved this one.</h4>
-    <p><strong>Shared happiness is double happiness</strong>, so let your friends solve this puzzle, too:</p>
-    <a href="" class="share-fb" target="_blank">on Facebook</a>
-    <br>
-    <a href="" class="share-twitter" target="_blank">on Twitter</a>
-    <br>
+    <p><strong>Did you have fun?</strong> Let your friends solve this puzzle, too:</p>
+    <div class="share-row">
+      <a href="" class="share-icon share-fb" target="_blank">on Facebook</a>
+      <a href="" class="share-icon share-twitter" target="_blank">on Twitter</a>
+      <a href="" class="share-icon share-gplus" target="_blank">on Google+</a>
+    </div>
     or donate a beer or flattr
   </div>
   <script type="text/javascript" src="notfunnys.js"></script>
@@ -210,6 +97,8 @@
         $('.share-fb').prop('href', 'http://www.facebook.com/sharer.php?u=' + shareUrl + '&p[title]=TITLE&p[url]=URL&p[summary]=' + text);
 
         $('.share-twitter').prop('href', 'https://twitter.com/intent/tweet?url=' + shareUrl + '&text=' + text);
+
+        $('.share-gplus').prop('href', 'https://plus.google.com/share?url=' + shareUrl);
       }
 
       function openShareWindow(url) {
@@ -230,8 +119,19 @@
       $('button.help').on('click', function() {
         $('div.help').toggle();
       });
+      $('body').on('click', function(event) {
+        if (!$(event.target).closest('.help').length) {
+          $('div.help').hide();
+        }
+      });
 
-      $('.share-fb, .share-twitter').on('click', function(event) {
+      $('#notfunny-button').on('click', function(event) {
+        var picUrl = notFunnyUrl + notFunnys[Math.floor(Math.random()*notFunnys.length-1)];
+        openPuzzle(picUrl, form.find('input[name=x]').val(), form.find('input[name=y]').val());
+        event.preventDefault();
+      });
+
+      $('.share-fb, .share-twitter, .share-gplus').on('click', function(event) {
         openShareWindow(this.href)
         event.preventDefault();
       });
